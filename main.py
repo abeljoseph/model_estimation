@@ -1,4 +1,4 @@
-def main():
+def main(): 
 	# Section 3
 	points_a = []
 	points_b = []
