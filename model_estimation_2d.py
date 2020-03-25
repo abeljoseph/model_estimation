@@ -80,9 +80,10 @@ def plot_parametric(boundary, x, y, al, bl, cl):
 
 
 data_2d = scipy.io.loadmat('data_files/mat/lab2_2.mat')
-al_set = data_2d.get('al')
-bl_set = data_2d.get('bl')
-cl_set = data_2d.get('cl')
+al_set = data_2d['al'].astype(int)
+bl_set = data_2d['bl'].astype(int)
+cl_set = data_2d['cl'].astype(int)
+
 
 x_min = min(*al_set[:, 0], *bl_set[:, 0], *cl_set[:, 0]) - 1
 x_max = max(*al_set[:, 0], *bl_set[:, 0], *cl_set[:, 0]) + 1
