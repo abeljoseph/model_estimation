@@ -1,4 +1,5 @@
-import numpy as np 
+import numpy as np
+from sequential_classifier import sequential_classifier
 
 def main():
 	# Section 3
@@ -15,14 +16,9 @@ def main():
 	points_a = np.array(points_a)
 	points_b = np.array(points_b)
 
+	cl = sequential_classifier(points_a, points_b)
+	cl.perform_classification()
 
-	num_steps = 100
-
-	# Create Meshgrid for MED Classification
-	x_grid = np.linspace(min(*points_a[:, 0], *points_b[:, 0]), max(*points_a[:, 0], *points_b[:, 0]),
-						 num_steps)
-	y_grid = np.linspace(min(*points_a[:, 1], *points_b[:, 1]), max(*points_a[:, 1], *points_b[:, 1]),
-						 num_steps)
 
 
 if __name__ == "__main__":
