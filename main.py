@@ -1,6 +1,7 @@
 import numpy as np
 from sequential_classifier import sequential_classifier
 
+
 def main():
 	# Section 3
 	points_a = []
@@ -18,7 +19,6 @@ def main():
 
 	cl = sequential_classifier(points_a, points_b)
 	cl.perform_classification()
-
 
 
 if __name__ == "__main__":
