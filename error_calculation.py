@@ -3,7 +3,7 @@ from statistics import mean, stdev
 import matplotlib.pyplot as plt
 from sequential_classifier import sequential_classifier
 
-def calculate_error(A, B, discriminants, ab_true, ba_true):
+def calculate_error(A, B, J, discriminants, true_n_ab, true_n_ba):
     J = 5
     K = 20
     total_error = []

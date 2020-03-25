@@ -72,7 +72,7 @@ class sequential_classifier:
 			true_n_ab.append(n_ab)
 			true_n_ba.append(n_ba)
 
-			if (J and j > J) or (not A and not B):
+			if (J and j > J) or (not len(A) and not len(B)):
 				break
 
 			j += 1
