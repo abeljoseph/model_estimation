@@ -21,7 +21,7 @@ class sequential_classifier:
 
 		return 1 if dist_a < dist_b else 2
 
-	def perform_classification(self, J):
+	def perform_classification(self, J=0):
 		j = 1
 		discriminants = []
 		true_n_ab = []
@@ -77,3 +77,4 @@ class sequential_classifier:
 
 			j += 1
 
+		return [discriminants, true_n_ab, true_n_ba]
