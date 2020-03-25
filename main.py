@@ -18,7 +18,7 @@ def main():
 	points_b = np.array(points_b)
 
 	cl = sequential_classifier(points_a, points_b)
-	cl.perform_classification()
+	cl.perform_classification(J=0)
 
 
 if __name__ == "__main__":
