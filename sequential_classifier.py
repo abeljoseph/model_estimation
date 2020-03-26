@@ -17,7 +17,7 @@ class sequential_classifier:
 		return sqrt((px0 - px1) ** 2 + (py0 - py1) ** 2)
 
 	# Adapted from lab 1
-	def get_med(a, b, prototype_A, prototype_B):
+	def get_med(self, a, b, prototype_A, prototype_B):
 		dist_a = sequential_classifier.get_euclidean_dist(prototype_A[0], prototype_A[1], a, b)
 		dist_b = sequential_classifier.get_euclidean_dist(prototype_B[0], prototype_B[1], a, b)
 
