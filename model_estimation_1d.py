@@ -42,26 +42,26 @@ def plot_parzen(a_pdf_estimated_1, a_pdf_estimated_2, b_pdf_estimated_1, b_pdf_e
     # Plot a 1
     axs[0][0].set_title("{} of a".format(estimation_type_1))
     axs[0][0].set(xlim=(0, 10), ylim=(0, 1))
-    axs[0][0].plot(a_vector, a_pdf_estimated_1, label='Estimated p(x)')
-    axs[0][0].plot(a_vector, a_pdf_true, label='True p(x)')
+    axs[0][0].plot(a_vector, a_pdf_estimated_1, color='C1', label='Estimated p(x)')
+    axs[0][0].plot(a_vector, a_pdf_true, color='C0', label='True p(x)')
 
     # Plot b 1
     axs[0][1].set_title("{} of b".format(estimation_type_1))
     axs[0][1].set(xlim=(0, 5), ylim=(0, 1))
-    axs[0][1].plot(b_vector, b_pdf_estimated_1, label='Estimated p(x)')
-    axs[0][1].plot(b_vector, b_pdf_true, label='True p(x)')
+    axs[0][1].plot(b_vector, b_pdf_estimated_1, color='C1', label='Estimated p(x)')
+    axs[0][1].plot(b_vector, b_pdf_true, color='C0', label='True p(x)')
 
     # Plot a 2
     axs[1][0].set_title("{} of a".format(estimation_type_2))
     axs[1][0].set(xlim=(0, 10), ylim=(0, 1))
-    axs[1][0].plot(a_vector, a_pdf_estimated_2, label='Estimated p(x)')
-    axs[1][0].plot(a_vector, a_pdf_true, label='True p(x)')
+    axs[1][0].plot(a_vector, a_pdf_estimated_2, color='C1', label='Estimated p(x)')
+    axs[1][0].plot(a_vector, a_pdf_true, color='C0', label='True p(x)')
 
     # Plot b 2
     axs[1][1].set_title("{} of b".format(estimation_type_2))
     axs[1][1].set(xlim=(0, 5), ylim=(0, 1))
-    axs[1][1].plot(b_vector, b_pdf_estimated_2, label='Estimated p(x)')
-    axs[1][1].plot(b_vector, b_pdf_true, label='True p(x)')
+    axs[1][1].plot(b_vector, b_pdf_estimated_2, color='C1', label='Estimated p(x)')
+    axs[1][1].plot(b_vector, b_pdf_true, color='C0', label='True p(x)')
 
     for ax in axs:
         for axis in ax:
