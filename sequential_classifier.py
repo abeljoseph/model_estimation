@@ -17,7 +17,7 @@ class sequential_classifier:
 		return sqrt((px0 - px1) ** 2 + (py0 - py1) ** 2)
 
 	# Adapted from lab 1
-	def get_med(self, a, b, prototype_A, prototype_B):
+	def get_med(a, b, prototype_A, prototype_B):
 		dist_a = sequential_classifier.get_euclidean_dist(prototype_A[0], prototype_A[1], a, b)
 		dist_b = sequential_classifier.get_euclidean_dist(prototype_B[0], prototype_B[1], a, b)
 
@@ -88,7 +88,7 @@ class sequential_classifier:
 			a_mu = discriminants[J][0,:]
 			b_mu = discriminants[J][1,:]
 
-			estimated_class = self.get_med(X, Y, a_mu, b_mu)
+			estimated_class = sequential_classifier.get_med(X, Y, a_mu, b_mu)
 
 			if (not true_n_ab[J] and estimated_class == 1):
 				break
