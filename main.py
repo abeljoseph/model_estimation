@@ -14,10 +14,7 @@ def main():
 		for line in datafile_b:
 			points_b.append([int(x) for x in line.split(',')])
 
-	points_a = np.array(points_a)
-	points_b = np.array(points_b)
-
-	cl = sequential_classifier(points_a, points_b)
+	cl = sequential_classifier(np.array(points_a), np.array(points_b))
 	cl.perform_classification(J=0)
 
 

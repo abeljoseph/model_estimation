@@ -1,6 +1,7 @@
 import random
 from math import sqrt
 import numpy as np
+from statistics import mean, stdev
 import matplotlib.pyplot as plt
 
 
@@ -8,6 +9,7 @@ class sequential_classifier:
 	def __init__(self, A, B):
 		self.A = A
 		self.B = B
+		self.classifier_count = 0
 
 	# Adapted from lab 1
 	@staticmethod
@@ -78,3 +80,109 @@ class sequential_classifier:
 			j += 1
 
 		return [discriminants, true_n_ab, true_n_ba]
+
+	@staticmethod
+	def classify_points(X, Y, J, discriminants, true_n_ab, true_n_ba):
+		estimated_class = 0
+		while J < discriminants.size:
+			a_mu = discriminants[J][0,:]
+			b_mu = discriminants[J][1,:]
+
+			estimated_class = sequential_classifier.get_med(X, Y, a_mu, b_mu)
+
+			if (not true_n_ab[J] and estimated_class == 1):
+				break
+			if (not true_n_ab[J] and estimated_class == 2):
+				break
+			
+			J += 1
+		
+		return estimated_class
+
+	def calculate_error(self, J, discriminants, true_n_ab, true_n_ba):
+		K = 20
+		total_error = []
+		classified = 0
+		for j in range(1, J):
+			for k in range(1, K):
+				error_rate = 0
+
+				# Sequential Classifier
+				classification = self.perform_classification(J=5)
+
+				# Classify points in class A
+				for i, pt in enumerate(self.A):
+					classified = sequential_classifier.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
+					# Add to error rate if class A is misclassified as class B
+					if classified == 2:
+						error_rate += 1
+
+				# Classify points in class B
+				for i, pt in enumerate(self.B):
+					classified = sequential_classifier.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
+					# Add to error rate if class B is misclassified as class A
+					if classified == 1:
+						error_rate += 1
+
+				total_error[k] = error_rate / 400
+
+		# a) average error rate
+		average_error_rate = mean(total_error)
+		# b) minimum error rate
+		min_error_rate = min(total_error)
+		# c) maximum error rate
+		max_error_rate = max(total_error)
+		# d) standard deviation of error rates
+		stdev_error_rate = stdev(total_error)
+
+		calculated_error_rates = [average_error_rate, min_error_rate, max_error_rate, stdev_error_rate]
+
+		# Plot Error Rates
+		J_vals = [1, 2, 3, 4, 5]
+
+		plt.figure()
+		plt.subplot(1, 2, 1)
+		plt.title("Error Rate of Sequential Classifier as a function of J")
+		plt.errorbar(J_vals, average_error_rate, stdev_error_rate, 'r', label='Avg Error Rate')
+		plt.plot(J_vals, min_error_rate, 'b', label='Min Error Rate')
+		plt.plot(J_vals, max_error_rate, 'g', label='Max Error Rate')
+		plt.xlabel('J')
+		plt.ylabel('Error Rate')
+		plt.subplot(1, 2, 2)
+		plt.title("Standard Deviation Error Rate of Sequential Classifier as a function of J")
+		plt.plot(J_vals, stdev_error_rate, 'c', label='Stdev Error Rate')
+		plt.xlabel('J')
+		plt.ylabel('Error Rate')
+		plt.tight_layout()
+		plt.show()
+
+		return calculated_error_rates
+
+	def perform_estimation(self, J=1):
+		if J < 1: return
+
+		res = self.perform_classification(J)
+		self.classifier_count += 1
+
+		if J > 1:
+			K = 20
+			self.calculate_error(J, *res)
+			return
+
+		# J = 1
+
+		num_steps = 100
+		# Create Meshgrid for MED Classification
+		x_grid = np.linspace(min(*self.A[:, 0], *self.B[:, 0]), max(*self.A[:, 0], *self.B[:, 0]),
+							 num_steps)
+		y_grid = np.linspace(min(*self.A[:, 1], *self.B[:, 1]), max(*self.A[:, 1], *self.B[:, 1]),
+							 num_steps)
+
+		x, y = np.meshgrid(x_grid, y_grid)
+		estimation = [[0 for _ in range(len(x_grid))] for _ in range(len(y_grid))]
+
+		for i in range(len(x_grid)):
+			for j in range(len(y_grid)):
+				estimation[i][j] = sequential_classifier.classify_points(x[i][j], y[i][j], J, *res)
+
+		# TODO: plot estimation
