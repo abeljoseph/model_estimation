@@ -72,11 +72,11 @@ def plot_parzen(a_pdf_estimated_1, a_pdf_estimated_2, b_pdf_estimated_1, b_pdf_e
 
 def parametric_gaussian():
     a_mean = np.mean(a)
-    a_sd = sum((a-a_mean)**2)/a_size
+    a_sd = np.std(a)
     a_pdf_estimated = get_gaussian(a_mean, a_sd, a)
 
     b_mean = np.mean(b)
-    b_sd = sum((b-b_mean)**2)/b_size
+    b_sd = np.std(b)
     b_pdf_estimated = get_gaussian(b_mean, b_sd, b)
 
     plot_comparison(a_pdf_estimated, b_pdf_estimated, "Parametric Estimation - Gaussian")
