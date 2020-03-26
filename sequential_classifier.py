@@ -149,7 +149,7 @@ class sequential_classifier:
 		plt.xlabel('J')
 		plt.ylabel('Error Rate')
 		plt.subplot(1, 2, 2)
-		plt.title("Standard Deviation Error Rate of Sequential Classifier as a function of J")
+		plt.title("Standard Deviation of Error Rates of Sequential Classifier as a function of J")
 		plt.plot(J_vals, stdev_error_rate, 'c', label='Stdev Error Rate')
 		plt.xlabel('J')
 		plt.ylabel('Error Rate')
