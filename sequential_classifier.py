@@ -9,6 +9,7 @@ class sequential_classifier:
 	def __init__(self, A, B):
 		self.A = A
 		self.B = B
+		self.classifier_count = 0
 
 	# Adapted from lab 1
 	@staticmethod
@@ -80,6 +81,12 @@ class sequential_classifier:
 
 		return [discriminants, true_n_ab, true_n_ba]
 
+	@staticmethod
+	def classify_points(J, X, Y, discriminants, true_n_ab, true_n_ba):
+		est = 0
+
+		# TODO: implement
+
 	def calculate_error(self, J, discriminants, true_n_ab, true_n_ba):
 		K = 20
 		total_error = []
@@ -92,18 +99,14 @@ class sequential_classifier:
 
 				# Classify points in class A
 				for i, pt in enumerate(self.A):
-					# TODO: implement classify_points
-					# classified = classify_points(J, pt[0], pt[1], discriminants, true_n_ab, true_n_ba)
-					classified = 0  # TODO: remove after implementation
+					classified = sequential_classifier.classify_points(J, pt[0], pt[1], discriminants, true_n_ab, true_n_ba)
 					# Add to error rate if class A is misclassified as class B
 					if classified == 2:
 						error_rate += 1
 
 				# Classify points in class B
 				for i, pt in enumerate(self.B):
-					# TODO: implement classify_points
-					# classified = classify_points(J, pt[0], pt[1], discriminants, true_n_ab, true_n_ba)
-					classified = 0  # TODO: remove after implementation
+					classified = sequential_classifier.classify_points(J, pt[0], pt[1], discriminants, true_n_ab, true_n_ba)
 					# Add to error rate if class B is misclassified as class A
 					if classified == 1:
 						error_rate += 1
@@ -141,3 +144,32 @@ class sequential_classifier:
 		plt.show()
 
 		return calculated_error_rates
+
+	def perform_estimation(self, J=1):
+		if J < 1: return
+
+		res = self.perform_classification(J)
+		self.classifier_count += 1
+
+		if J > 1:
+			K = 20
+			self.calculate_error(J, *res)
+			return
+
+		# J = 1
+
+		num_steps = 100
+		# Create Meshgrid for MED Classification
+		x_grid = np.linspace(min(*self.A[:, 0], *self.B[:, 0]), max(*self.A[:, 0], *self.B[:, 0]),
+							 num_steps)
+		y_grid = np.linspace(min(*self.A[:, 1], *self.B[:, 1]), max(*self.A[:, 1], *self.B[:, 1]),
+							 num_steps)
+
+		x, y = np.meshgrid(x_grid, y_grid)
+		estimation = [[0 for _ in range(len(x_grid))] for _ in range(len(y_grid))]
+
+		for i in range(len(x_grid)):
+			for j in range(len(y_grid)):
+				estimation[i][j] = sequential_classifier.classify_points(J, x[i][j], y[i][j], *res)
+
+		# TODO: plot estimation
