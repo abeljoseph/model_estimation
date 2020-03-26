@@ -6,16 +6,12 @@ from matplotlib.patches import Rectangle
 
 def get_covariance(set, mean):
     covariance = np.zeros((2, 2))
-    # for i in range(len(set)):
-    for i in range(1):
+    for i in range(len(set)):
         temp = [[set[i][0], set[i][1]]]
-        print(temp)
-        print(np.array(temp).T)
-        covariance = np.matmul(np.array(temp).T, temp)
-        print(covariance)
+        covariance = covariance + np.matmul(np.array(temp).T, temp)
 
-    mean_temp = np.array([[mean[0]], [mean[1]]])
-    covariance = ((1/len(set)) * covariance) - np.matmul(mean_temp, mean_temp.T)
+    mean_temp = [[mean[0], mean[1]]]
+    covariance = ((1/len(set)) * covariance) - np.matmul(np.array(mean_temp).T, mean_temp)
     return covariance
 
 
@@ -26,18 +22,18 @@ def get_ML_pair_boundary(Sa, Sb, Ma, Mb, x, y):
 
     inv_cov_a = np.linalg.inv(Sa)
     inv_cov_b = np.linalg.inv(Sb)
-    mean_a = np.array(Ma)
-    mean_b = np.array(Mb)
+    mean_a = Ma
+    mean_b = Mb
 
     Q0 = np.subtract(inv_cov_a, inv_cov_b)
-    Q1 = 2 * (np.matmul(mean_b,inv_cov_b) - np.matmul(mean_a,inv_cov_a))
-    Q2 = np.matmul(np.matmul(mean_a, inv_cov_a), mean_a.T) - np.matmul(np.matmul(mean_b, inv_cov_b), mean_b.T)
+    Q1 = 2 * (np.dot(mean_b, inv_cov_b) - np.dot(mean_a, inv_cov_a))
+    Q2 = np.dot(np.dot(mean_a, inv_cov_a), mean_a.T) - np.dot(np.dot(mean_b, inv_cov_b), mean_b.T)
 
     for i in range(num_steps):
         for j in range(num_steps):
-            coord = [[x[i][j]], [y[i][j]]]
-            dist = np.matmul(np.matmul(np.array(coord).T, Q0), coord) + np.matmul(Q1, coord) + Q2
-            boundary[i][j] = dist[0][0]
+            coord = [x[i][j], y[i][j]]
+            dist = np.matmul(np.matmul(coord, Q0), np.array(coord).T) + np.matmul(Q1, np.array(coord).T) + Q2
+            boundary[i][j] = dist
 
     return boundary
 
@@ -84,7 +80,6 @@ al_set = data_2d['al'].astype(int)
 bl_set = data_2d['bl'].astype(int)
 cl_set = data_2d['cl'].astype(int)
 
-
 x_min = min(*al_set[:, 0], *bl_set[:, 0], *cl_set[:, 0]) - 1
 x_max = max(*al_set[:, 0], *bl_set[:, 0], *cl_set[:, 0]) + 1
 y_min = min(*al_set[:, 1], *bl_set[:, 1], *cl_set[:, 1]) - 1
@@ -99,14 +94,14 @@ bl_mean = np.array([np.mean(bl_set[:, 0]), np.mean(bl_set[:, 1])])
 cl_mean = np.array([np.mean(cl_set[:, 0]), np.mean(cl_set[:, 1])])
 
 al_cov = get_covariance(al_set, al_mean)
-# bl_cov = get_covariance(bl_set, bl_mean)
-# cl_cov = get_covariance(cl_set, cl_mean)
-#
-# ML_ab = get_ML_pair_boundary(al_cov, bl_cov, al_mean, bl_mean.T, x1, y1)
-# ML_ac = get_ML_pair_boundary(al_cov, cl_cov, al_mean, cl_mean.T, x1, y1)
-# ML_bc = get_ML_pair_boundary(bl_cov, cl_cov, bl_mean, cl_mean.T, x1, y1)
-#
-# total_boundary_plot = get_ML_boundary(x1, y1, ML_ab, ML_ac, ML_bc)
+bl_cov = get_covariance(bl_set, bl_mean)
+cl_cov = get_covariance(cl_set, cl_mean)
 
-# if __name__ == '__main__':
-    # plot_parametric(total_boundary_plot, x_grid, y_grid, al_set, bl_set, cl_set)
+ML_ab = get_ML_pair_boundary(al_cov, bl_cov, al_mean, bl_mean.T, x1, y1)
+ML_ac = get_ML_pair_boundary(al_cov, cl_cov, al_mean, cl_mean.T, x1, y1)
+ML_bc = get_ML_pair_boundary(bl_cov, cl_cov, bl_mean, cl_mean.T, x1, y1)
+
+total_boundary_plot = get_ML_boundary(x1, y1, ML_ab, ML_ac, ML_bc)
+
+if __name__ == '__main__':
+    plot_parametric(total_boundary_plot, x_grid, y_grid, al_set, bl_set, cl_set)
