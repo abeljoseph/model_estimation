@@ -82,13 +82,13 @@ class sequential_classifier:
 		return [discriminants, true_n_ab, true_n_ba]
 
 	@staticmethod
-	def classify_points(self, A, B, J, discriminants, true_n_ab, true_n_ba):
+	def classify_points(self, X, Y, J, discriminants, true_n_ab, true_n_ba):
 		estimated_class = 0
 		while J < discriminants.size:
 			a_mu = discriminants[J][0,:]
 			b_mu = discriminants[J][1,:]
 
-			estimated_class = self.get_med(A, B, a_mu, b_mu)
+			estimated_class = self.get_med(X, Y, a_mu, b_mu)
 
 			if (not true_n_ab[J] and estimated_class == 1):
 				break
@@ -112,14 +112,14 @@ class sequential_classifier:
 
 				# Classify points in class A
 				for i, pt in enumerate(self.A):
-					classified = self.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
+					classified = sequential_classifier.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
 					# Add to error rate if class A is misclassified as class B
 					if classified == 2:
 						error_rate += 1
 
 				# Classify points in class B
 				for i, pt in enumerate(self.B):
-					classified = self.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
+					classified = sequential_classifier.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
 					# Add to error rate if class B is misclassified as class A
 					if classified == 1:
 						error_rate += 1
@@ -183,6 +183,6 @@ class sequential_classifier:
 
 		for i in range(len(x_grid)):
 			for j in range(len(y_grid)):
-				estimation[i][j] = self.classify_points(x[i][j], y[i][j], J, *res)
+				estimation[i][j] = sequential_classifier.classify_points(x[i][j], y[i][j], J, *res)
 
 		# TODO: plot estimation
