@@ -109,9 +109,9 @@ def create_pdf(mesh, set, std, var):
 
 
 data_2d = scipy.io.loadmat('data_files/mat/lab2_2.mat')
-al_set = data_2d['al'].astype(int)
-bl_set = data_2d['bl'].astype(int)
-cl_set = data_2d['cl'].astype(int)
+al_set = data_2d['al'].astype(float)
+bl_set = data_2d['bl'].astype(float)
+cl_set = data_2d['cl'].astype(float)
 
 # Parametric Estimation
 
