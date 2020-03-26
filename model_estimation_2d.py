@@ -1,7 +1,6 @@
 import scipy.io
 import numpy as np
 import matplotlib.pyplot as plt
-
 from matplotlib.patches import Rectangle
 
 def get_covariance(set, mean):
@@ -75,18 +74,54 @@ def plot_parametric(boundary, x, y, al, bl, cl):
     plt.show()
 
 
+def plot_npe(boundary, x, y, al, bl, cl):
+    plt.title("Non-Parametric Estimation of al, bl, cl")
+    plt.ylabel("Feature 2")
+    plt.xlabel("Feature 1")
+
+    plt.scatter(al[:, 0], al[:, 1], color='r')
+    plt.scatter(bl[:, 0], bl[:, 1], color='g')
+    plt.scatter(cl[:, 0], cl[:, 1], color='b')
+
+    contour = plt.contour(x, y, boundary, colors="purple")
+
+    handles = [Rectangle((0, 0), 1, 1, color='r'), Rectangle((0, 0), 1, 1, color='g'),
+               Rectangle((0, 0), 1, 1, color='b'), contour.collections[0]]
+    labels = ['Class al', 'Class bl', 'Class cl', 'ML (NPE) Classifier']
+
+    plt.legend(handles, labels)
+
+    plt.show()
+
+
+def get_gaussian(x):
+    return (1/(2 * np.pi)) * np.exp((-1/2) * np.sum(x * x, axis=1))
+
+
+def create_pdf(mesh, set, std, var):
+    pdf = []
+    for i, val in enumerate(mesh):
+        x = (val - set) / std
+        prob = 1 / np.size(set) * np.sum(1 / var * get_gaussian(x))
+        pdf.append(prob)
+
+    return pdf
+
+
 data_2d = scipy.io.loadmat('data_files/mat/lab2_2.mat')
 al_set = data_2d['al'].astype(int)
 bl_set = data_2d['bl'].astype(int)
 cl_set = data_2d['cl'].astype(int)
+
+# Parametric Estimation
 
 x_min = min(*al_set[:, 0], *bl_set[:, 0], *cl_set[:, 0]) - 1
 x_max = max(*al_set[:, 0], *bl_set[:, 0], *cl_set[:, 0]) + 1
 y_min = min(*al_set[:, 1], *bl_set[:, 1], *cl_set[:, 1]) - 1
 y_max = max(*al_set[:, 1], *bl_set[:, 1], *cl_set[:, 1]) + 1
 
-x_grid = np.linspace(x_min, x_max, num=100)
-y_grid = np.linspace(y_min, y_max, num=100)
+x_grid = np.linspace(x_min, x_max, num=400)
+y_grid = np.linspace(y_min, y_max, num=400)
 x1, y1 = np.meshgrid(x_grid, y_grid)
 
 al_mean = np.array([np.mean(al_set[:, 0]), np.mean(al_set[:, 1])])
@@ -103,5 +138,28 @@ ML_bc = get_ML_pair_boundary(bl_cov, cl_cov, bl_mean, cl_mean.T, x1, y1)
 
 total_boundary_plot = get_ML_boundary(x1, y1, ML_ab, ML_ac, ML_bc)
 
+# Non-Parametric Estimation
+
+res = 400
+x_mesh = x1.reshape(res*res, 1)     # Arranges by column
+y_mesh = y1.reshape(res*res, 1)
+mesh_points = np.concatenate((x_mesh, y_mesh), axis=1)
+
+std = 20
+var = 400
+
+al_pdf = np.array(create_pdf(mesh_points, al_set, std, var))
+bl_pdf = np.array(create_pdf(mesh_points, bl_set, std, var))
+cl_pdf = np.array(create_pdf(mesh_points, cl_set, std, var))
+
+al_pdf = al_pdf.reshape(res*res, 1)     # Arranges by column
+bl_pdf = bl_pdf.reshape(res*res, 1)
+cl_pdf = cl_pdf.reshape(res*res, 1)
+
+pdf_arr = np.concatenate((al_pdf, bl_pdf, cl_pdf), axis=1)
+pdf_boundary = np.argmax(pdf_arr, axis=1).reshape(res, res)
+
+
 if __name__ == '__main__':
     plot_parametric(total_boundary_plot, x_grid, y_grid, al_set, bl_set, cl_set)
+    plot_npe(pdf_boundary, x_grid, y_grid, al_set, bl_set, cl_set)
