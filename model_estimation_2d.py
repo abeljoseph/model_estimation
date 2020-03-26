@@ -55,9 +55,10 @@ def get_ML_boundary(x, y, ML_ab, ML_ac, ML_bc):
 
 
 def plot_parametric(boundary, x, y, al, bl, cl):
-    plt.title("Parametric Estimation of al, bl, cl")
+    plt.title("Section 3: Parametric Estimation")
     plt.ylabel("Feature 2")
     plt.xlabel("Feature 1")
+    plt.grid(True)
 
     plt.scatter(al[:, 0], al[:, 1], color='r')
     plt.scatter(bl[:, 0], bl[:, 1], color='g')
@@ -75,9 +76,10 @@ def plot_parametric(boundary, x, y, al, bl, cl):
 
 
 def plot_npe(boundary, x, y, al, bl, cl):
-    plt.title("Non-Parametric Estimation of al, bl, cl")
+    plt.title("Section 3: Non-Parametric Estimation")
     plt.ylabel("Feature 2")
     plt.xlabel("Feature 1")
+    plt.grid(True)
 
     plt.scatter(al[:, 0], al[:, 1], color='r')
     plt.scatter(bl[:, 0], bl[:, 1], color='g')
