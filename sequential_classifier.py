@@ -82,36 +82,49 @@ class sequential_classifier:
 		return [discriminants, true_n_ab, true_n_ba]
 
 	@staticmethod
-	def classify_points(J, X, Y, discriminants, true_n_ab, true_n_ba):
+	def classify_points(self, A, B, J, discriminants, true_n_ab, true_n_ba):
 		est = 0
+		while J < discriminants.size:
+			a_mu = discriminants[J][0,:]
+			b_mu = discriminants[J][1,:]
 
-		# TODO: implement
+			est = self.get_med(A, B, a_mu, b_mu)
+
+			if (not true_n_ab[J] and est == 1):
+				break
+			if (not true_n_ab[J] and est == 2):
+				break
+			
+			J += 1
+		
+		return est
 
 	def calculate_error(self, J, discriminants, true_n_ab, true_n_ba):
 		K = 20
 		total_error = []
+		classified = 0
 		for j in range(1, J):
 			for k in range(1, K):
 				error_rate = 0
 
 				# Sequential Classifier
-				discriminants, true_n_ab, true_n_ba = self.perform_classification(J=5)  # need method from abel
+				classification = self.perform_classification(J=5)
 
 				# Classify points in class A
 				for i, pt in enumerate(self.A):
-					classified = sequential_classifier.classify_points(J, pt[0], pt[1], discriminants, true_n_ab, true_n_ba)
+					classified = self.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
 					# Add to error rate if class A is misclassified as class B
 					if classified == 2:
 						error_rate += 1
 
 				# Classify points in class B
 				for i, pt in enumerate(self.B):
-					classified = sequential_classifier.classify_points(J, pt[0], pt[1], discriminants, true_n_ab, true_n_ba)
+					classified = self.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
 					# Add to error rate if class B is misclassified as class A
 					if classified == 1:
 						error_rate += 1
 
-				total_error[k] = error_rate / 200
+				total_error[k] = error_rate / 400
 
 		# a) average error rate
 		average_error_rate = mean(total_error)
@@ -170,6 +183,6 @@ class sequential_classifier:
 
 		for i in range(len(x_grid)):
 			for j in range(len(y_grid)):
-				estimation[i][j] = sequential_classifier.classify_points(J, x[i][j], y[i][j], *res)
+				estimation[i][j] = self.classify_points(x[i][j], y[i][j], J, *res)
 
 		# TODO: plot estimation
