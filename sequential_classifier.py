@@ -83,21 +83,21 @@ class sequential_classifier:
 
 	@staticmethod
 	def classify_points(self, A, B, J, discriminants, true_n_ab, true_n_ba):
-		est = 0
+		estimated_class = 0
 		while J < discriminants.size:
 			a_mu = discriminants[J][0,:]
 			b_mu = discriminants[J][1,:]
 
-			est = self.get_med(A, B, a_mu, b_mu)
+			estimated_class = self.get_med(A, B, a_mu, b_mu)
 
-			if (not true_n_ab[J] and est == 1):
+			if (not true_n_ab[J] and estimated_class == 1):
 				break
-			if (not true_n_ab[J] and est == 2):
+			if (not true_n_ab[J] and estimated_class == 2):
 				break
 			
 			J += 1
 		
-		return est
+		return estimated_class
 
 	def calculate_error(self, J, discriminants, true_n_ab, true_n_ba):
 		K = 20
