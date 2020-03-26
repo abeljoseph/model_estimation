@@ -82,7 +82,7 @@ class sequential_classifier:
 		return [discriminants, true_n_ab, true_n_ba]
 
 	@staticmethod
-	def classify_points(self, X, Y, J, discriminants, true_n_ab, true_n_ba):
+	def classify_points(X, Y, J, discriminants, true_n_ab, true_n_ba):
 		estimated_class = 0
 		while J < discriminants.size:
 			a_mu = discriminants[J][0,:]
