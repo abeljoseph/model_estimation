@@ -3,6 +3,7 @@ from math import sqrt
 import numpy as np
 from statistics import mean, stdev
 import matplotlib.pyplot as plt
+import scipy.io
 
 
 class sequential_classifier:
@@ -16,8 +17,8 @@ class sequential_classifier:
 	def get_euclidean_dist(px1, py1, px0, py0):
 		return sqrt((px0 - px1) ** 2 + (py0 - py1) ** 2)
 
-	@staticmethod
 	# Adapted from lab 1
+	@staticmethod
 	def get_med(a, b, prototype_A, prototype_B):
 		dist_a = sequential_classifier.get_euclidean_dist(prototype_A[0], prototype_A[1], a, b)
 		dist_b = sequential_classifier.get_euclidean_dist(prototype_B[0], prototype_B[1], a, b)
@@ -159,6 +160,12 @@ class sequential_classifier:
 
 		return calculated_error_rates
 
+	def plot_sequential(self, x, y, estimation):
+		plt.scatter(self.A)
+		plt.scatter(self.B)
+		plt.contour(x, y, estimation)
+		plt.show()
+
 	def perform_estimation(self, J=1):
 		if J < 1: return
 
@@ -186,4 +193,12 @@ class sequential_classifier:
 			for j in range(len(y_grid)):
 				estimation[i][j] = sequential_classifier.classify_points(x[i][j], y[i][j], J, *res)
 
-		# TODO: plot estimation
+		self.plot_sequential(x, y, estimation)
+
+
+data_2d = scipy.io.loadmat('data_files/mat/lab2_3.mat')
+points_a = data_2d['a'].astype(float)
+points_b = data_2d['b'].astype(float)
+
+cl = sequential_classifier(np.array(points_a), np.array(points_b))
+cl.perform_estimation(J=1)
