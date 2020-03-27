@@ -132,7 +132,6 @@ class sequential_classifier:
 						error_rate += 1
 
 				total_error.append(error_rate/400)
-			print(total_error)
 				
 			# a) average error rate
 			average_error_rate.append(np.mean(total_error))
@@ -215,7 +214,7 @@ cl_1, cl_2, cl_3, cl_4 = sequential_classifier(np.array(points_a), np.array(poin
 				   sequential_classifier(np.array(points_a), np.array(points_b)), \
 				   sequential_classifier(np.array(points_a), np.array(points_b))
 
-# cl_1.perform_estimation()
-# cl_2.perform_estimation()
-# cl_3.perform_estimation()
+cl_1.perform_estimation()
+cl_2.perform_estimation()
+cl_3.perform_estimation()
 cl_4.perform_estimation(J=5)
