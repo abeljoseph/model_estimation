@@ -91,7 +91,7 @@ class sequential_classifier:
 	@staticmethod
 	def classify_points(X, Y, J, discriminants, true_n_ab, true_n_ba):
 		est = 0
-		while J < len(discriminants):  # TODO: verify this line
+		while J < len(discriminants):
 			a_mu = discriminants[J][0,:]
 			b_mu = discriminants[J][1,:]
 
