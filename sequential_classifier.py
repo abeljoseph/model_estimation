@@ -14,6 +14,7 @@ class sequential_classifier:
 		self.B = B
 		global classifier_count
 		classifier_count += 1
+		self.classifier_num = classifier_count
 
 	# Adapted from lab 1
 	@staticmethod
@@ -23,12 +24,8 @@ class sequential_classifier:
 	# Adapted from lab 1
 	@staticmethod
 	def get_med(a, b, prototype_A, prototype_B):
-		# dist_a = sequential_classifier.get_euclidean_dist(prototype_A[0], prototype_A[1], a, b)
-		# dist_b = sequential_classifier.get_euclidean_dist(prototype_B[0], prototype_B[1], a, b)
-
-		# Euclidean distances
-		dist_a = sqrt(a - prototype_A[0])**2 + (b - prototype_A[1])**2
-		dist_b = sqrt(a - prototype_B[0])**2 + (b - prototype_B[1])**2
+		dist_a = sequential_classifier.get_euclidean_dist(prototype_A[0], prototype_A[1], a, b)
+		dist_b = sequential_classifier.get_euclidean_dist(prototype_B[0], prototype_B[1], a, b)
 
 		return 1 if dist_a < dist_b else 2
 
@@ -42,15 +39,16 @@ class sequential_classifier:
 		B = self.B
 		prototype_A = 0
 		prototype_B = 0
-		n_ba = 0  # Error count
-		n_ab = 0
 
 		while True:
 			misclassified = True
+			n_ba = 0  # Error count
+			n_ab = 0
 
 			while misclassified:
 				mis_A = []  # Misclassified points
 				mis_B = []
+				n_ab, n_ba = 0, 0
 
 				if len(A) > 0: prototype_A = A[random.randint(0, len(A) - 1)]
 				if len(B) > 0: prototype_B = B[random.randint(0, len(B) - 1)]
@@ -88,20 +86,20 @@ class sequential_classifier:
 
 			j += 1
 
-		return [discriminants, true_n_ab, true_n_ba]
+		return [np.array(discriminants), true_n_ab, true_n_ba]
 
 	@staticmethod
 	def classify_points(X, Y, J, discriminants, true_n_ab, true_n_ba):
 		est = 0
-		while J < np.prod(discriminants.size):
+		while J < len(discriminants):  # TODO: verify this line
 			a_mu = discriminants[J][0,:]
 			b_mu = discriminants[J][1,:]
 
-			estimated_class = sequential_classifier.get_med(X, Y, a_mu, b_mu)
+			est = sequential_classifier.get_med(X, Y, a_mu, b_mu)
 
-			if (not true_n_ba[J] and estimated_class == 1):
+			if not true_n_ba[J] and est == 1:
 				break
-			if (not true_n_ab[J] and estimated_class == 2):
+			if not true_n_ab[J] and est == 2:
 				break
 			
 			J += 1
@@ -111,7 +109,6 @@ class sequential_classifier:
 	def calculate_error(self, J, res):
 		K = 20
 		total_error = []
-		classified = 0
 		for j in range(1, J):
 			for k in range(1, K):
 				error_rate = 0
@@ -165,17 +162,21 @@ class sequential_classifier:
 		return calculated_error_rates
 
 	def plot_sequential(self, x, y, estimation):
-		plt.scatter(self.A)
-		plt.scatter(self.B)
-		plt.contour(x, y, estimation)
+		fig, ax = plt.subplots()
+		ax.plot(self.A[:,0], self.A[:,1], "b.", label='Class A')
+		ax.plot(self.B[:,0], self.B[:,1], 'r.', label='Class B')
+		plt.xlabel('x1')
+		plt.ylabel('x2')
+		plt.title(f'Discriminant {self.classifier_num}')
+		ax.contourf(x.reshape(100, 100), y.reshape(100,100),
+					np.matrix(estimation).reshape(100,100), linestyles='solid', colors=['#d6e9ff', '#ffebeb'])
+		ax.legend()
 		plt.show()
 
 	def perform_estimation(self, J=1):
 		if J < 1: return
 
 		res = self.perform_classification(0)
-		global classifier_count
-		classifier_count += 1
 
 		if J > 1:
 			self.calculate_error(J, res)
