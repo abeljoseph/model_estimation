@@ -130,13 +130,13 @@ class sequential_classifier:
 				total_error.append(error_rate/400)
 				
 		# a) average error rate
-		average_error_rate = mean(total_error)
+		average_error_rate = np.mean(total_error, axis=1)
 		# b) minimum error rate
-		min_error_rate = min(total_error)
+		min_error_rate = np.min(total_error, axis=1)
 		# c) maximum error rate
-		max_error_rate = max(total_error)
+		max_error_rate = np.max(total_error, axis=1)
 		# d) standard deviation of error rates
-		stdev_error_rate = stdev(total_error)
+		stdev_error_rate = np.std(total_error, axis=1)
 
 		calculated_error_rates = [average_error_rate, min_error_rate, max_error_rate, stdev_error_rate]
 
@@ -173,7 +173,7 @@ class sequential_classifier:
 		ax.legend()
 		plt.show()
 
-	def perform_estimation(self, J=5):
+	def perform_estimation(self, J=1):
 		if J < 1: return
 
 		res = self.perform_classification(0)
@@ -205,10 +205,12 @@ data_2d = scipy.io.loadmat('data_files/mat/lab2_3.mat')
 points_a = data_2d['a'].astype(float)
 points_b = data_2d['b'].astype(float)
 
-cl_1, cl_2, cl_3 = sequential_classifier(np.array(points_a), np.array(points_b)), \
+cl_1, cl_2, cl_3, cl_4 = sequential_classifier(np.array(points_a), np.array(points_b)), \
+				   sequential_classifier(np.array(points_a), np.array(points_b)), \
 				   sequential_classifier(np.array(points_a), np.array(points_b)), \
 				   sequential_classifier(np.array(points_a), np.array(points_b))
 
 cl_1.perform_estimation()
 cl_2.perform_estimation()
 cl_3.perform_estimation()
+cl_4.perform_estimation(J=5)
