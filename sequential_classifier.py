@@ -91,7 +91,7 @@ class sequential_classifier:
 	@staticmethod
 	def classify_points(X, Y, J, discriminants, true_n_ab, true_n_ba):
 		est = 0
-		while J < len(discriminants):  # TODO: verify this line
+		while J < np.size(discriminants):
 			a_mu = discriminants[J][0,:]
 			b_mu = discriminants[J][1,:]
 
@@ -113,25 +113,28 @@ class sequential_classifier:
 		min_error_rate = []
 		max_error_rate = []
 		stdev_error_rate = []
+		classified = []
 		for j in range(J):
 			for k in range(K):
 				error_rate = 0
 
 				# Classify points in class A
-				for i, pt in enumerate(self.A):
-					classified = sequential_classifier.classify_points(pt[0], pt[1], J, *res)
+				for i in range(len(self.A)):
+					pt = self.A[i]
+					classified[i] = sequential_classifier.classify_points(pt[0], pt[1], J, *res)
 					# Add to error rate if class A is misclassified as class B
-					if classified == 2:
+					if classified[i] == 2:
 						error_rate += 1
 
 				# Classify points in class B
-				for i, pt in enumerate(self.B):
-					classified = sequential_classifier.classify_points(pt[0], pt[1], J, *res)
+				for i in range(len(self.B)):
+					pt = self.B[i]
+					classified[i] = sequential_classifier.classify_points(pt[0], pt[1], J, *res)
 					# Add to error rate if class B is misclassified as class A
-					if classified == 1:
+					if classified[i] == 1:
 						error_rate += 1
 
-				total_error.append(error_rate/400)
+			total_error.append(error_rate/400)
 				
 			# a) average error rate
 			average_error_rate.append(np.mean(total_error))
@@ -218,3 +221,4 @@ cl_1.perform_estimation()
 cl_2.perform_estimation()
 cl_3.perform_estimation()
 cl_4.perform_estimation(J=5)
+
