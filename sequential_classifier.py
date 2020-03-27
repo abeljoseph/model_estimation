@@ -195,12 +195,6 @@ class sequential_classifier:
 
 		res = self.perform_classification(0)
 
-		if J > 1:
-			self.calculate_error(J, res)
-			return
-
-		# J = 1
-
 		num_steps = 100
 		# Create Meshgrid for MED Classification
 		x_grid = np.linspace(min(*self.A[:, 0], *self.B[:, 0]), max(*self.A[:, 0], *self.B[:, 0]),
@@ -230,5 +224,5 @@ cl_1, cl_2, cl_3, cl_4 = sequential_classifier(np.array(points_a), np.array(poin
 # cl_1.perform_estimation()
 # cl_2.perform_estimation()
 # cl_3.perform_estimation()
-cl_4.perform_estimation(J=5)
+cl_4.calculate_error(J=5)
 
