@@ -114,7 +114,10 @@ class sequential_classifier:
 		max_error_rate = []
 		stdev_error_rate = []
 		for j in range(J):
+			error_rate = []
 			for k in range(K):
+				res = self.perform_classification(j)
+
 				total_errors = 0
 				
 				classified = []
@@ -135,9 +138,12 @@ class sequential_classifier:
 					if classified[i] == 1:
 						total_errors += 1
 
-			# calcuate error rate
-			error_rate.append(total_errors/400)
+				# calcuate error rate
+				error_rate.append(total_errors/400)
 				
+
+			print("J={}:{}".format(j,error_rate))
+
 			# a) average error rate
 			average_error_rate.append(np.average(error_rate))
 			# b) minimum error rate
@@ -158,7 +164,7 @@ class sequential_classifier:
 		plt.errorbar(J_vals, average_error_rate, stdev_error_rate, linestyle='-', marker='D', label='Avg Error Rate')
 		plt.plot(J_vals, min_error_rate, "b.", linestyle='-', label='Min Error Rate')
 		plt.plot(J_vals, max_error_rate, "r.", linestyle='-', label='Max Error Rate')
-		plt.legend(loc='lower left')
+		plt.legend(loc='upper left')
 		plt.xlabel('J')
 		plt.ylabel('Error Rate')
 		plt.subplot(2, 1, 2)
@@ -167,6 +173,7 @@ class sequential_classifier:
 		plt.xlabel('J')
 		plt.ylabel('Standard Deviation')
 		plt.tight_layout()
+		plt.legend(loc='upper left')
 		plt.show()
 
 		return calculated_error_rates
@@ -220,8 +227,8 @@ cl_1, cl_2, cl_3, cl_4 = sequential_classifier(np.array(points_a), np.array(poin
 				   sequential_classifier(np.array(points_a), np.array(points_b)), \
 				   sequential_classifier(np.array(points_a), np.array(points_b))
 
-cl_1.perform_estimation()
-cl_2.perform_estimation()
-cl_3.perform_estimation()
+# cl_1.perform_estimation()
+# cl_2.perform_estimation()
+# cl_3.perform_estimation()
 cl_4.perform_estimation(J=5)
 
