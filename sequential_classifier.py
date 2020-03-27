@@ -108,14 +108,14 @@ class sequential_classifier:
 
 	def calculate_error(self, J, res):
 		K = 20
-		total_error = []
+		error_rate = []
 		average_error_rate = []
 		min_error_rate = []
 		max_error_rate = []
 		stdev_error_rate = []
 		for j in range(J):
 			for k in range(K):
-				error_rate = 0
+				total_errors = 0
 				
 				classified = []
 				# Classify points in class A
@@ -124,7 +124,7 @@ class sequential_classifier:
 					classified.append(sequential_classifier.classify_points(pt[0], pt[1], j, *res))
 					# Add to error rate if class A is misclassified as class B
 					if classified[i] == 2:
-						error_rate += 1
+						total_errors += 1
 
 				classified = []
 				# Classify points in class B
@@ -133,18 +133,19 @@ class sequential_classifier:
 					classified.append(sequential_classifier.classify_points(pt[0], pt[1], j, *res))
 					# Add to error rate if class B is misclassified as class A
 					if classified[i] == 1:
-						error_rate += 1
+						total_errors += 1
 
-			total_error.append(error_rate/400)
+			# calcuate error rate
+			error_rate.append(total_errors/400)
 				
 			# a) average error rate
-			average_error_rate.append(np.mean(total_error))
+			average_error_rate.append(np.average(error_rate))
 			# b) minimum error rate
-			min_error_rate.append(np.min(total_error))
+			min_error_rate.append(np.min(error_rate))
 			# c) maximum error rate
-			max_error_rate.append(np.max(total_error))
+			max_error_rate.append(np.max(error_rate))
 			# d) standard deviation of error rates
-			stdev_error_rate.append(np.std(total_error))
+			stdev_error_rate.append(np.std(error_rate))
 
 		calculated_error_rates = [average_error_rate, min_error_rate, max_error_rate, stdev_error_rate]
 
@@ -156,7 +157,8 @@ class sequential_classifier:
 		plt.title("Error Rate of Sequential Classifier as a function of J")
 		plt.errorbar(J_vals, average_error_rate, stdev_error_rate, linestyle='-', marker='D', label='Avg Error Rate')
 		plt.plot(J_vals, min_error_rate, "b.", linestyle='-', label='Min Error Rate')
-		plt.plot(J_vals, max_error_rate, "g.", linestyle='-', label='Max Error Rate')
+		plt.plot(J_vals, max_error_rate, "r.", linestyle='-', label='Max Error Rate')
+		plt.legend(loc='lower left')
 		plt.xlabel('J')
 		plt.ylabel('Error Rate')
 		plt.subplot(2, 1, 2)
