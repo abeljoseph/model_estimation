@@ -121,7 +121,7 @@ class sequential_classifier:
 				# Classify points in class A
 				for i in range(len(self.A)):
 					pt = self.A[i]
-					classified.append(sequential_classifier.classify_points(pt[0], pt[1], J, *res))
+					classified.append(sequential_classifier.classify_points(pt[0], pt[1], j, *res))
 					# Add to error rate if class A is misclassified as class B
 					if classified[i] == 2:
 						error_rate += 1
@@ -130,7 +130,7 @@ class sequential_classifier:
 				# Classify points in class B
 				for i in range(len(self.B)):
 					pt = self.B[i]
-					classified.append(sequential_classifier.classify_points(pt[0], pt[1], J, *res))
+					classified.append(sequential_classifier.classify_points(pt[0], pt[1], j, *res))
 					# Add to error rate if class B is misclassified as class A
 					if classified[i] == 1:
 						error_rate += 1
