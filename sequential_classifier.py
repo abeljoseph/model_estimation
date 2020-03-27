@@ -91,7 +91,7 @@ class sequential_classifier:
 	@staticmethod
 	def classify_points(X, Y, J, discriminants, true_n_ab, true_n_ba):
 		est = 0
-		while J < np.size(discriminants):
+		while J < len(discriminants):
 			a_mu = discriminants[J][0,:]
 			b_mu = discriminants[J][1,:]
 
@@ -112,7 +112,7 @@ class sequential_classifier:
 		min_error_rate = []
 		max_error_rate = []
 		stdev_error_rate = []
-		for j in range(J):
+		for j in range(1, J+1):
 			error_rate = np.zeros(K)
 			for k in range(K):
 				res = self.perform_classification(j)
@@ -219,8 +219,8 @@ cl_1, cl_2, cl_3, cl_4 = sequential_classifier(np.array(points_a), np.array(poin
 				   sequential_classifier(np.array(points_a), np.array(points_b)), \
 				   sequential_classifier(np.array(points_a), np.array(points_b))
 
-# cl_1.perform_estimation()
-# cl_2.perform_estimation()
-# cl_3.perform_estimation()
+cl_1.perform_estimation()
+cl_2.perform_estimation()
+cl_3.perform_estimation()
 cl_4.calculate_error(J=5)
 
