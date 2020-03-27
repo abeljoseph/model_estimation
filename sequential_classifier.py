@@ -5,12 +5,15 @@ from statistics import mean, stdev
 import matplotlib.pyplot as plt
 import scipy.io
 
+classifier_count = 0
+
 
 class sequential_classifier:
 	def __init__(self, A, B):
 		self.A = A
 		self.B = B
-		self.classifier_count = 0
+		global classifier_count
+		classifier_count += 1
 
 	# Adapted from lab 1
 	@staticmethod
@@ -20,8 +23,12 @@ class sequential_classifier:
 	# Adapted from lab 1
 	@staticmethod
 	def get_med(a, b, prototype_A, prototype_B):
-		dist_a = sequential_classifier.get_euclidean_dist(prototype_A[0], prototype_A[1], a, b)
-		dist_b = sequential_classifier.get_euclidean_dist(prototype_B[0], prototype_B[1], a, b)
+		# dist_a = sequential_classifier.get_euclidean_dist(prototype_A[0], prototype_A[1], a, b)
+		# dist_b = sequential_classifier.get_euclidean_dist(prototype_B[0], prototype_B[1], a, b)
+
+		# Euclidean distances
+		dist_a = sqrt(a - prototype_A[0])**2 + (b - prototype_A[1])**2
+		dist_b = sqrt(a - prototype_B[0])**2 + (b - prototype_B[1])**2
 
 		return 1 if dist_a < dist_b else 2
 
@@ -45,8 +52,8 @@ class sequential_classifier:
 				mis_A = []  # Misclassified points
 				mis_B = []
 
-				if len(A): prototype_A = A[random.randint(0, len(A) - 1)]
-				if len(B): prototype_B = B[random.randint(0, len(B) - 1)]
+				if len(A) > 0: prototype_A = A[random.randint(0, len(A) - 1)]
+				if len(B) > 0: prototype_B = B[random.randint(0, len(B) - 1)]
 
 				# Classify all points for A
 				for i, pt in enumerate(A):
@@ -72,7 +79,7 @@ class sequential_classifier:
 						A = mis_A
 					misclassified = False
 
-			discriminants.extend([prototype_A, prototype_B])
+			discriminants.extend([[prototype_A, prototype_B]])
 			true_n_ab.append(n_ab)
 			true_n_ba.append(n_ba)
 
@@ -85,21 +92,21 @@ class sequential_classifier:
 
 	@staticmethod
 	def classify_points(X, Y, J, discriminants, true_n_ab, true_n_ba):
-		estimated_class = 0
-		while J < discriminants.size:
+		est = 0
+		while J < np.prod(discriminants.size):
 			a_mu = discriminants[J][0,:]
 			b_mu = discriminants[J][1,:]
 
 			estimated_class = sequential_classifier.get_med(X, Y, a_mu, b_mu)
 
-			if (not true_n_ab[J] and estimated_class == 1):
+			if (not true_n_ba[J] and estimated_class == 1):
 				break
 			if (not true_n_ab[J] and estimated_class == 2):
 				break
 			
 			J += 1
 		
-		return estimated_class
+		return est
 
 	def calculate_error(self, J, res):
 		K = 20
@@ -167,7 +174,8 @@ class sequential_classifier:
 		if J < 1: return
 
 		res = self.perform_classification(0)
-		self.classifier_count += 1
+		global classifier_count
+		classifier_count += 1
 
 		if J > 1:
 			self.calculate_error(J, res)
@@ -196,5 +204,10 @@ data_2d = scipy.io.loadmat('data_files/mat/lab2_3.mat')
 points_a = data_2d['a'].astype(float)
 points_b = data_2d['b'].astype(float)
 
-cl = sequential_classifier(np.array(points_a), np.array(points_b))
-cl.perform_estimation(J=1)
+cl_1, cl_2, cl_3 = sequential_classifier(np.array(points_a), np.array(points_b)), \
+				   sequential_classifier(np.array(points_a), np.array(points_b)), \
+				   sequential_classifier(np.array(points_a), np.array(points_b))
+
+cl_1.perform_estimation()
+cl_2.perform_estimation()
+cl_3.perform_estimation()
