@@ -109,8 +109,12 @@ class sequential_classifier:
 	def calculate_error(self, J, res):
 		K = 20
 		total_error = []
-		for j in range(1, J):
-			for k in range(1, K):
+		average_error_rate = []
+		min_error_rate = []
+		max_error_rate = []
+		stdev_error_rate = []
+		for j in range(J):
+			for k in range(K):
 				error_rate = 0
 
 				# Classify points in class A
@@ -128,15 +132,16 @@ class sequential_classifier:
 						error_rate += 1
 
 				total_error.append(error_rate/400)
+			print(total_error)
 				
-		# a) average error rate
-		average_error_rate = np.mean(total_error, axis=1)
-		# b) minimum error rate
-		min_error_rate = np.min(total_error, axis=1)
-		# c) maximum error rate
-		max_error_rate = np.max(total_error, axis=1)
-		# d) standard deviation of error rates
-		stdev_error_rate = np.std(total_error, axis=1)
+			# a) average error rate
+			average_error_rate.append(np.mean(total_error))
+			# b) minimum error rate
+			min_error_rate.append(np.min(total_error))
+			# c) maximum error rate
+			max_error_rate.append(np.max(total_error))
+			# d) standard deviation of error rates
+			stdev_error_rate.append(np.std(total_error))
 
 		calculated_error_rates = [average_error_rate, min_error_rate, max_error_rate, stdev_error_rate]
 
@@ -144,18 +149,18 @@ class sequential_classifier:
 		J_vals = [1, 2, 3, 4, 5]
 
 		plt.figure()
-		plt.subplot(1, 2, 1)
+		plt.subplot(2, 1, 1)
 		plt.title("Error Rate of Sequential Classifier as a function of J")
-		plt.errorbar(J_vals, average_error_rate, stdev_error_rate, 'r', label='Avg Error Rate')
-		plt.plot(J_vals, min_error_rate, 'b', label='Min Error Rate')
-		plt.plot(J_vals, max_error_rate, 'g', label='Max Error Rate')
+		plt.errorbar(J_vals, average_error_rate, stdev_error_rate, linestyle='-', marker='D', label='Avg Error Rate')
+		plt.plot(J_vals, min_error_rate, "b.", linestyle='-', label='Min Error Rate')
+		plt.plot(J_vals, max_error_rate, "g.", linestyle='-', label='Max Error Rate')
 		plt.xlabel('J')
 		plt.ylabel('Error Rate')
-		plt.subplot(1, 2, 2)
+		plt.subplot(2, 1, 2)
 		plt.title("Standard Deviation of Error Rates of Sequential Classifier as a function of J")
-		plt.plot(J_vals, stdev_error_rate, 'c', label='Stdev Error Rate')
+		plt.plot(J_vals, stdev_error_rate, "c.",  linestyle='-', label='Stdev Error Rate')
 		plt.xlabel('J')
-		plt.ylabel('Error Rate')
+		plt.ylabel('Standard Deviation')
 		plt.tight_layout()
 		plt.show()
 
@@ -210,7 +215,7 @@ cl_1, cl_2, cl_3, cl_4 = sequential_classifier(np.array(points_a), np.array(poin
 				   sequential_classifier(np.array(points_a), np.array(points_b)), \
 				   sequential_classifier(np.array(points_a), np.array(points_b))
 
-cl_1.perform_estimation()
-cl_2.perform_estimation()
-cl_3.perform_estimation()
+# cl_1.perform_estimation()
+# cl_2.perform_estimation()
+# cl_3.perform_estimation()
 cl_4.perform_estimation(J=5)
