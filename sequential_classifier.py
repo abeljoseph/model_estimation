@@ -171,9 +171,9 @@ class sequential_classifier:
 		ax.plot(self.B[:,0], self.B[:,1], 'r.', label='Class B')
 		plt.xlabel('x1')
 		plt.ylabel('x2')
-		plt.title(f'Discriminant {self.classifier_num}')
+		plt.title(f'Classifier {self.classifier_num}')
 		ax.contourf(x.reshape(100, 100), y.reshape(100,100),
-					np.matrix(estimation).reshape(100,100), linestyles='solid', colors=['#d6e9ff', '#ffebeb'])
+					np.matrix(estimation).reshape(100,100), linestyles='solid', colors=['#d6e9ff', '#ffb0b0'])
 		ax.legend()
 		plt.show()
 
