@@ -127,8 +127,8 @@ class sequential_classifier:
 					if classified == 1:
 						error_rate += 1
 
-				total_error[k] = error_rate / 400
-
+				total_error.append(error_rate/400)
+				
 		# a) average error rate
 		average_error_rate = mean(total_error)
 		# b) minimum error rate
@@ -173,7 +173,7 @@ class sequential_classifier:
 		ax.legend()
 		plt.show()
 
-	def perform_estimation(self, J=1):
+	def perform_estimation(self, J=5):
 		if J < 1: return
 
 		res = self.perform_classification(0)
