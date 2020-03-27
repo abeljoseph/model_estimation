@@ -101,7 +101,7 @@ class sequential_classifier:
 		
 		return estimated_class
 
-	def calculate_error(self, J, discriminants, true_n_ab, true_n_ba):
+	def calculate_error(self, J, res):
 		K = 20
 		total_error = []
 		classified = 0
@@ -109,19 +109,16 @@ class sequential_classifier:
 			for k in range(1, K):
 				error_rate = 0
 
-				# Sequential Classifier
-				classification = self.perform_classification(J=5)
-
 				# Classify points in class A
 				for i, pt in enumerate(self.A):
-					classified = sequential_classifier.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
+					classified = sequential_classifier.classify_points(pt[0], pt[1], J, *res)
 					# Add to error rate if class A is misclassified as class B
 					if classified == 2:
 						error_rate += 1
 
 				# Classify points in class B
 				for i, pt in enumerate(self.B):
-					classified = sequential_classifier.classify_points(pt[0], pt[1], J, classification[0], classification[1], classification[2])
+					classified = sequential_classifier.classify_points(pt[0], pt[1], J, *res)
 					# Add to error rate if class B is misclassified as class A
 					if classified == 1:
 						error_rate += 1
@@ -169,12 +166,11 @@ class sequential_classifier:
 	def perform_estimation(self, J=1):
 		if J < 1: return
 
-		res = self.perform_classification(J)
+		res = self.perform_classification(0)
 		self.classifier_count += 1
 
 		if J > 1:
-			K = 20
-			self.calculate_error(J, *res)
+			self.calculate_error(J, res)
 			return
 
 		# J = 1
