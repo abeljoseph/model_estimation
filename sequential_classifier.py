@@ -170,13 +170,13 @@ class sequential_classifier:
 
 	def plot_sequential(self, x, y, estimation):
 		fig, ax = plt.subplots()
-		ax.plot(self.A[:,0], self.A[:,1], "b.", label='Class A')
-		ax.plot(self.B[:,0], self.B[:,1], 'r.', label='Class B')
+		ax.plot(self.A[:,0], self.A[:,1], color='b', marker='.', linestyle='', label='Class A')
+		ax.plot(self.B[:,0], self.B[:,1], color='r', marker='.', linestyle='', label='Class B')
 		plt.xlabel('x1')
 		plt.ylabel('x2')
-		plt.title(f'Discriminant {self.classifier_num}')
-		ax.contourf(x.reshape(100, 100), y.reshape(100,100),
-					np.matrix(estimation).reshape(100,100), linestyles='solid', colors=['#d6e9ff', '#ffebeb'])
+		plt.title(f'Classifier {self.classifier_num}')
+		ax.contourf(x, y, np.matrix(estimation), colors=['#d6e9ff', '#ffb0b0'])
+		ax.contour(x, y, np.matrix(estimation), colors='purple', linewidths=0.3)
 		ax.legend()
 		plt.show()
 
