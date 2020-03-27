@@ -29,7 +29,7 @@ class sequential_classifier:
 
 		return 1 if dist_a < dist_b else 2
 
-	def perform_classification(self, J):
+	def perform_classification(self, J=np.inf):
 		j = 1
 		discriminants = []
 		true_n_ab = []
@@ -81,7 +81,7 @@ class sequential_classifier:
 			true_n_ab.append(n_ab)
 			true_n_ba.append(n_ba)
 
-			if (J and j > J) or (not len(A) and not len(B)):
+			if (j > J) or (not len(A) and not len(B)):
 				break
 
 			j += 1
@@ -106,18 +106,16 @@ class sequential_classifier:
 		
 		return est
 
-	def calculate_error(self, J, res):
+	def calculate_error(self, J):
 		K = 20
-		error_rate = []
 		average_error_rate = []
 		min_error_rate = []
 		max_error_rate = []
 		stdev_error_rate = []
 		for j in range(J):
-			error_rate = []
+			error_rate = np.zeros(K)
 			for k in range(K):
 				res = self.perform_classification(j)
-
 				total_errors = 0
 				
 				classified = []
@@ -139,7 +137,7 @@ class sequential_classifier:
 						total_errors += 1
 
 				# calcuate error rate
-				error_rate.append(total_errors/400)
+				error_rate[k] = (total_errors/400)
 				
 
 			print("J={}:{}".format(j,error_rate))
@@ -190,10 +188,10 @@ class sequential_classifier:
 		ax.legend()
 		plt.show()
 
-	def perform_estimation(self, J=1):
+	def perform_estimation(self, J=np.inf):
 		if J < 1: return
 
-		res = self.perform_classification(0)
+		res = self.perform_classification(J)
 
 		num_steps = 100
 		# Create Meshgrid for MED Classification
