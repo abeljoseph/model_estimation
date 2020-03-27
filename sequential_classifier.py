@@ -89,20 +89,18 @@ class sequential_classifier:
 		return [np.array(discriminants), true_n_ab, true_n_ba]
 
 	@staticmethod
-	def classify_points(X, Y, J, discriminants, true_n_ab, true_n_ba):
+	def classify_points(X, Y, discriminants, true_n_ab, true_n_ba):
 		est = 0
-		while J < len(discriminants):
-			a_mu = discriminants[J][0,:]
-			b_mu = discriminants[J][1,:]
+		for i in range(len(discriminants)):
+			a_mu = discriminants[i][0,:]
+			b_mu = discriminants[i][1,:]
 
 			est = sequential_classifier.get_med(X, Y, a_mu, b_mu)
 
-			if not true_n_ba[J] and est == 1:
+			if not true_n_ba[i] and est == 1:
 				break
-			if not true_n_ab[J] and est == 2:
+			if not true_n_ab[i] and est == 2:
 				break
-			
-			J += 1
 		
 		return est
 
@@ -122,7 +120,7 @@ class sequential_classifier:
 				# Classify points in class A
 				for i in range(len(self.A)):
 					pt = self.A[i]
-					classified.append(sequential_classifier.classify_points(pt[0], pt[1], j, *res))
+					classified.append(sequential_classifier.classify_points(pt[0], pt[1], *res))
 					# Add to error rate if class A is misclassified as class B
 					if classified[i] == 2:
 						total_errors += 1
@@ -131,7 +129,7 @@ class sequential_classifier:
 				# Classify points in class B
 				for i in range(len(self.B)):
 					pt = self.B[i]
-					classified.append(sequential_classifier.classify_points(pt[0], pt[1], j, *res))
+					classified.append(sequential_classifier.classify_points(pt[0], pt[1], *res))
 					# Add to error rate if class B is misclassified as class A
 					if classified[i] == 1:
 						total_errors += 1
@@ -205,7 +203,7 @@ class sequential_classifier:
 
 		for i in range(len(x_grid)):
 			for j in range(len(y_grid)):
-				estimation[i][j] = sequential_classifier.classify_points(x[i][j], y[i][j], J, *res)
+				estimation[i][j] = sequential_classifier.classify_points(x[i][j], y[i][j], *res)
 
 		self.plot_sequential(x, y, estimation)
 
