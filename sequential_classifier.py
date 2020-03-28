@@ -136,9 +136,6 @@ class sequential_classifier:
 
 				# calcuate error rate
 				error_rate[k] = (total_errors/400)
-				
-
-			print("J={}:{}".format(j,error_rate))
 
 			# a) average error rate
 			average_error_rate.append(np.average(error_rate))
@@ -191,7 +188,7 @@ class sequential_classifier:
 
 		res = self.perform_classification(J)
 
-		num_steps = 100
+		num_steps = 500
 		# Create Meshgrid for MED Classification
 		x_grid = np.linspace(min(*self.A[:, 0], *self.B[:, 0]), max(*self.A[:, 0], *self.B[:, 0]),
 							 num_steps)
