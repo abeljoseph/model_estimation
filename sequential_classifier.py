@@ -29,7 +29,7 @@ class sequential_classifier:
 
 		return 1 if dist_a < dist_b else 2
 
-	def perform_classification(self, J):
+	def perform_classification(self, J=np.inf):
 		j = 1
 		discriminants = []
 		true_n_ab = []
@@ -81,7 +81,7 @@ class sequential_classifier:
 			true_n_ab.append(n_ab)
 			true_n_ba.append(n_ba)
 
-			if (J and j > J) or (not len(A) and not len(B)):
+			if (j > J) or (not len(A) and not len(B)):
 				break
 
 			j += 1
@@ -89,39 +89,38 @@ class sequential_classifier:
 		return [np.array(discriminants), true_n_ab, true_n_ba]
 
 	@staticmethod
-	def classify_points(X, Y, J, discriminants, true_n_ab, true_n_ba):
+	def classify_points(X, Y, discriminants, true_n_ab, true_n_ba):
 		est = 0
-		while J < np.size(discriminants):
-			a_mu = discriminants[J][0,:]
-			b_mu = discriminants[J][1,:]
+		for i in range(len(discriminants)):
+			a_mu = discriminants[i][0,:]
+			b_mu = discriminants[i][1,:]
 
 			est = sequential_classifier.get_med(X, Y, a_mu, b_mu)
 
-			if not true_n_ba[J] and est == 1:
+			if not true_n_ba[i] and est == 1:
 				break
-			if not true_n_ab[J] and est == 2:
+			if not true_n_ab[i] and est == 2:
 				break
-			
-			J += 1
 		
 		return est
 
-	def calculate_error(self, J, res):
+	def calculate_error(self, J):
 		K = 20
-		error_rate = []
 		average_error_rate = []
 		min_error_rate = []
 		max_error_rate = []
 		stdev_error_rate = []
-		for j in range(J):
+		for j in range(1, J+1):
+			error_rate = np.zeros(K)
 			for k in range(K):
+				res = self.perform_classification(j)
 				total_errors = 0
 				
 				classified = []
 				# Classify points in class A
 				for i in range(len(self.A)):
 					pt = self.A[i]
-					classified.append(sequential_classifier.classify_points(pt[0], pt[1], j, *res))
+					classified.append(sequential_classifier.classify_points(pt[0], pt[1], *res))
 					# Add to error rate if class A is misclassified as class B
 					if classified[i] == 2:
 						total_errors += 1
@@ -130,14 +129,14 @@ class sequential_classifier:
 				# Classify points in class B
 				for i in range(len(self.B)):
 					pt = self.B[i]
-					classified.append(sequential_classifier.classify_points(pt[0], pt[1], j, *res))
+					classified.append(sequential_classifier.classify_points(pt[0], pt[1], *res))
 					# Add to error rate if class B is misclassified as class A
 					if classified[i] == 1:
 						total_errors += 1
 
-			# calcuate error rate
-			error_rate.append(total_errors/400)
-				
+				# calcuate error rate
+				error_rate[k] = (total_errors/400)
+
 			# a) average error rate
 			average_error_rate.append(np.average(error_rate))
 			# b) minimum error rate
@@ -158,7 +157,7 @@ class sequential_classifier:
 		plt.errorbar(J_vals, average_error_rate, stdev_error_rate, linestyle='-', marker='D', label='Avg Error Rate')
 		plt.plot(J_vals, min_error_rate, "b.", linestyle='-', label='Min Error Rate')
 		plt.plot(J_vals, max_error_rate, "r.", linestyle='-', label='Max Error Rate')
-		plt.legend(loc='lower left')
+		plt.legend(loc='upper left')
 		plt.xlabel('J')
 		plt.ylabel('Error Rate')
 		plt.subplot(2, 1, 2)
@@ -167,6 +166,7 @@ class sequential_classifier:
 		plt.xlabel('J')
 		plt.ylabel('Standard Deviation')
 		plt.tight_layout()
+		plt.legend(loc='upper left')
 		plt.show()
 
 		return calculated_error_rates
@@ -183,18 +183,12 @@ class sequential_classifier:
 		ax.legend()
 		plt.show()
 
-	def perform_estimation(self, J=1):
+	def perform_estimation(self, J=np.inf):
 		if J < 1: return
 
-		res = self.perform_classification(0)
+		res = self.perform_classification(J)
 
-		if J > 1:
-			self.calculate_error(J, res)
-			return
-
-		# J = 1
-
-		num_steps = 100
+		num_steps = 500
 		# Create Meshgrid for MED Classification
 		x_grid = np.linspace(min(*self.A[:, 0], *self.B[:, 0]), max(*self.A[:, 0], *self.B[:, 0]),
 							 num_steps)
@@ -206,7 +200,7 @@ class sequential_classifier:
 
 		for i in range(len(x_grid)):
 			for j in range(len(y_grid)):
-				estimation[i][j] = sequential_classifier.classify_points(x[i][j], y[i][j], J, *res)
+				estimation[i][j] = sequential_classifier.classify_points(x[i][j], y[i][j], *res)
 
 		self.plot_sequential(x, y, estimation)
 
@@ -223,5 +217,5 @@ cl_1, cl_2, cl_3, cl_4 = sequential_classifier(np.array(points_a), np.array(poin
 cl_1.perform_estimation()
 cl_2.perform_estimation()
 cl_3.perform_estimation()
-cl_4.perform_estimation(J=5)
+cl_4.calculate_error(J=5)
 
